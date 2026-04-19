@@ -39,7 +39,7 @@ void USART2_Send_Char(char chr){
 
 	while(!(USART2->ISR & USART_ISR_TXE_TXFNF));
 	USART2->TDR = chr;
-	while (!(USART2->ISR & USART_ISR_TC)) {}
+	//while (!(USART2->ISR & USART_ISR_TC)) {}
 }
 
 void USART2_Send_Str(const char* str){
