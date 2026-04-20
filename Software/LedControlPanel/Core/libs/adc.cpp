@@ -6,7 +6,10 @@
 
 void ADC_t::Init() {
 
+	// PA6 - Colour Temperature, PA7 - Brightness
+
 	RCC->IOPENR |= RCC_IOPENR_GPIOAEN;
+
 	//Settings for GPIO PA6
     GPIOA->MODER |= GPIO_MODER_MODE6_0 | GPIO_MODER_MODE6_1;    // Analog mode enable
     GPIOA->PUPDR &= ~GPIO_PUPDR_PUPD6;                          // No pull-up, pull-down
@@ -63,4 +66,13 @@ uint16_t ADC_t::Measure(uint8_t pin_num) {
     ADC1->ISR |= ADC_ISR_EOC;                           // Clear  End of conversion flag
 
     return value;
+}
+
+uint8_t ADC_t::MeasurePercent(uint8_t pin_num) {
+
+	uint32_t measureResult = this->Measure(pin_num);
+
+	uint8_t valueInPercent = (measureResult * 100U) / 4095U;
+
+    return valueInPercent;
 }

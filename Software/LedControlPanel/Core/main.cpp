@@ -2,6 +2,7 @@
 #include <cstring>
 #include "usart.hpp"
 #include "adc.hpp"
+#include "tim.hpp"
 #include "stm32g0xx.h"
 
 int main(void){
@@ -10,7 +11,7 @@ int main(void){
 	RCC->IOPENR |= RCC_IOPENR_GPIOAEN;
 	GPIOA->MODER &= ~GPIO_MODER_MODE4;              // Clear MODE for PA4
 	GPIOA->MODER |= GPIO_MODER_MODE4_0;             // Output mode
-	GPIOA->PUPDR &= ~GPIO_PUPDR_PUPD4;              // 00b → No Pull
+	GPIOA->PUPDR &= ~GPIO_PUPDR_PUPD4;              // No pull-up\pull-down
 
 #ifdef USE_USART_LOGGING
 	USART2_Init();
@@ -23,13 +24,18 @@ int main(void){
 	uint16_t resultColourTemp = 0;
 	uint16_t resultBrightness = 0;
 
+	TIM_t Tim2;
+	Tim2.Init();
+
 	while (1)
 	{
-		resultColourTemp = Adc.Measure(6);
-		resultBrightness = Adc.Measure(7);
+		resultColourTemp = Adc.MeasurePercent(6);
+		resultBrightness = Adc.MeasurePercent(7);
 		usart_printf("ColourTemperature = %u\r\n", resultColourTemp);
 		usart_printf("Brightness = %u\r\n", resultBrightness);
+		Tim2.SetDuty(1, resultColourTemp);
+		Tim2.SetDuty(2, resultBrightness);
 		GPIOA->ODR ^= GPIO_ODR_OD4;
-		for(int i = 0; i<1000000; i++);
+		for(int i = 0; i<100000; i++);
 	}
 }

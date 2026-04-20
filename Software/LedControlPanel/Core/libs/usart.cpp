@@ -10,22 +10,24 @@ void USART2_Init(void){
 	RCC->APBENR1 |= RCC_APBENR1_USART2EN;
 	RCC->IOPENR |= RCC_IOPENR_GPIOAEN;
 
-	GPIOA->MODER &= ~GPIO_MODER_MODE2;              // Clear MODE for PA2
+	//Settings for GPIO PA2
+	GPIOA->MODER &= ~GPIO_MODER_MODE2;              // Clear MODE
 	GPIOA->MODER |= GPIO_MODER_MODE2_1;             // Alternate function mode
 	GPIOA->OTYPER &= ~GPIO_OTYPER_OT2;              // Output push-pull
-	GPIOA->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED2;        // Clear OSPEEDR for PA2
+	GPIOA->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED2;        // Clear OSPEEDR
 	GPIOA->OSPEEDR |= GPIO_OSPEEDR_OSPEED2_0;       // Medium speed
 	GPIOA->PUPDR &= ~(GPIO_PUPDR_PUPD2);            // Clear PUPDR
-	GPIOA->AFR[0] &= ~(GPIO_AFRL_AFSEL2);           // Clear Alternate function for PA2
+	GPIOA->AFR[0] &= ~(GPIO_AFRL_AFSEL2);           // Clear Alternate function
 	GPIOA->AFR[0] |= GPIO_AFRL_AFSEL2_0;            // AF1 (USART2_TX)
 
-	GPIOA->MODER &= ~GPIO_MODER_MODE3;              // Clear MODE for PA3
+	//Settings for GPIO PA3
+	GPIOA->MODER &= ~GPIO_MODER_MODE3;              // Clear MODE
 	GPIOA->MODER |= GPIO_MODER_MODE3_1;             // Alternate function mode
-	GPIOA->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED3;        // Clear OSPEEDR for PA3
+	GPIOA->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED3;        // Clear OSPEEDR
 	GPIOA->OSPEEDR |= GPIO_OSPEEDR_OSPEED3_0;       // Medium speed
 	GPIOA->PUPDR &= ~GPIO_PUPDR_PUPD3;              // Clear PUPDR
 	GPIOA->PUPDR |= GPIO_PUPDR_PUPD3_0;             // pull-up
-	GPIOA->AFR[0] &= ~(GPIO_AFRL_AFSEL3);           // Clear Alternate function for PA3
+	GPIOA->AFR[0] &= ~(GPIO_AFRL_AFSEL3);           // Clear Alternate function
 	GPIOA->AFR[0] |= GPIO_AFRL_AFSEL3_0;            // AF1 (USART2_RX)
 
 	USART2->BRR = 16000000U / 115200U;              // 0x08A for FCLK = 16 MHz and baudrate = 115200
