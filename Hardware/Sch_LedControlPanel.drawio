@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 YaBrowser/26.3.0.0 Safari/537.36" version="29.6.1">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 YaBrowser/26.3.0.0 Safari/537.36">
   <diagram name="Страница-1" id="_o-viSFapYy-Fmvs2KVI">
-    <mxGraphModel dx="3021" dy="2387" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2595" dy="2159" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -328,8 +328,8 @@
         <mxCell id="0mxqcJEEe0ar-ncukzkp-130" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Крутилка&lt;div&gt;яркости&lt;/div&gt;" vertex="1">
           <mxGeometry height="30" width="60" x="455" y="-50" as="geometry" />
         </mxCell>
-        <mxCell id="0mxqcJEEe0ar-ncukzkp-131" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Крутилка&lt;div&gt;цв. температуры&lt;/div&gt;" vertex="1">
-          <mxGeometry height="30" width="110" x="530" y="80" as="geometry" />
+        <mxCell id="0mxqcJEEe0ar-ncukzkp-131" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Крутилка&lt;div&gt;цветовой температуры&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="110" x="520" y="60" as="geometry" />
         </mxCell>
         <mxCell id="0mxqcJEEe0ar-ncukzkp-132" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Плата WeAct STM32G031F6P6" vertex="1">
           <mxGeometry height="30" width="120" x="20" y="-40" as="geometry" />

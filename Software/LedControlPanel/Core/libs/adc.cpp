@@ -3,7 +3,6 @@
 #include "usart.hpp"
 #include "stm32g0xx.h"
 
-
 void ADC_t::Init() {
 
 	// PA6 - Colour Temperature, PA7 - Brightness
