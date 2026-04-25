@@ -5,6 +5,10 @@
 #include "tim.hpp"
 #include "stm32g0xx.h"
 
+#define LED_COLD 1         // Channel 1 TIM2
+#define LED_HOT  2         // Channel 2 TIM2
+
+
 void Timeout_ms_Init();
 void timeout_ms(uint32_t timeout_ms);
 
@@ -35,8 +39,17 @@ int main(void){
 		Adc.MeasureAll();
 		usart_printf("ColourTemperature = %u\r\n", Adc.colourTemp);
 		usart_printf("Brightness = %u\r\n", Adc.brightness);
-		Tim2.SetDuty(1, Adc.colourTemp);
-		Tim2.SetDuty(2, Adc.brightness);
+
+		// ColourTemperature and Brightness changing
+		if (Adc.colourTemp >= 50){
+			Tim2.SetDuty(LED_COLD, Adc.brightness);
+			Tim2.SetDuty(LED_HOT, ((100 - (2*(Adc.colourTemp - 50)))*Adc.brightness)/100);
+		}
+		else{
+			Tim2.SetDuty(LED_HOT, Adc.brightness);
+			Tim2.SetDuty(LED_COLD, ((2*Adc.colourTemp)*Adc.brightness)/100);
+		}
+
 		GPIOA->ODR ^= GPIO_ODR_OD4;
 		timeout_ms(100);
 	}
