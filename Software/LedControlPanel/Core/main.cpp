@@ -27,21 +27,18 @@ int main(void){
 #endif
 
 	Adc.Init();
-	uint16_t resultColourTemp = 0;
-	uint16_t resultBrightness = 0;
 
 	Tim2.Init();
 
 	while (1)
 	{
-		resultColourTemp = Adc.MeasurePercent(6);
-		resultBrightness = Adc.MeasurePercent(7);
-		usart_printf("ColourTemperature = %u\r\n", resultColourTemp);
-		usart_printf("Brightness = %u\r\n", resultBrightness);
-		Tim2.SetDuty(1, resultColourTemp);
-		Tim2.SetDuty(2, resultBrightness);
+		Adc.MeasureAll();
+		usart_printf("ColourTemperature = %u\r\n", Adc.colourTemp);
+		usart_printf("Brightness = %u\r\n", Adc.brightness);
+		Tim2.SetDuty(1, Adc.colourTemp);
+		Tim2.SetDuty(2, Adc.brightness);
 		GPIOA->ODR ^= GPIO_ODR_OD4;
-		timeout_ms(1000);
+		timeout_ms(100);
 	}
 }
 

@@ -13,12 +13,12 @@ extern "C" {
 
 class ADC_t {
 public:
+	uint16_t colourTemp = 0;
+	uint16_t brightness = 0;
 
     void Init();
-
     uint16_t Measure(uint8_t pin_num);
-
-    uint8_t MeasurePercent(uint8_t pin_num);
+    void MeasureAll();
 };
 
 #endif /* __ADC_HPP */
