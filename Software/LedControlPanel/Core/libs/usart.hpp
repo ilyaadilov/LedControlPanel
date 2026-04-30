@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 void USART2_Init(void);
+void USART2_DeInit(void);
 void USART2_Send_Char(char chr);
 void USART2_Send_Str(const char* str);
 
@@ -18,14 +19,13 @@ void USART2_Send_Str(const char* str);
 #ifdef __cplusplus
 //--------------Realization printf--------------
 
-// Защита от переопределения стандартных макросов
 #ifndef INT32_MIN_NUM
 #define INT32_MIN_NUM 	 (-2147483647-1)
 #define INT32_MAX_NUM 	 (2147483647)
 #define UINT32_MAX_NUM   (4294967295U)
 #endif
 
-// === Минимальные ручные type traits (без <type_traits>) ===
+// === type traits  ===
 template<typename T>
 struct is_cstring { static constexpr bool value = false; };
 template<> struct is_cstring<const char*> { static constexpr bool value = true; };
@@ -35,13 +35,13 @@ template<typename T>
 struct is_pointer { static constexpr bool value = false; };
 template<typename T> struct is_pointer<T*> { static constexpr bool value = true; };
 
-// Определение знаковости через компиляционную проверку
+// Identification of signedness
 template<typename T>
 struct is_signed {
     static constexpr bool value = static_cast<T>(-1) < static_cast<T>(0);
 };
 
-// === Вспомогательные функции вывода ===
+// === Support functions ===
 
 static inline void print_str(const char* str) {
     if (!str) str = "(null)";
@@ -89,24 +89,24 @@ static inline void print_hex(uint32_t num, bool upper) {
     while (i--) USART2_Send_Char(buf[i]);
 }
 
-// === Шаблонная обработка аргументов ===
+// === Template processing of arguments ===
 
-// Базовый случай — нет аргументов
+// The base case is there are no arguments
 static inline void format_args(const char*& fmt) {
     while (*fmt) USART2_Send_Char(*fmt++);
 }
 
-// Универсальная обработка аргумента с ручными проверками типов
+// Universal argument handling with manual type checks
 template<typename T>
 inline void handle_arg(T arg, char spec) {
-    // Строки (проверка через ручной trait)
+    // Strings
     if constexpr (is_cstring<T>::value) {
         if (spec == 's') {
             print_str(arg);
             return;
         }
     }
-    // Указатели
+    // Pointers
     else if constexpr (is_pointer<T>::value) {
         if (spec == 'p') {
         	USART2_Send_Char('0');
@@ -115,9 +115,9 @@ inline void handle_arg(T arg, char spec) {
             return;
         }
     }
-    // Целочисленные типы
+    // Integer
     else if constexpr (sizeof(T) <= sizeof(uint32_t)) {
-        // Знаковые типы
+        // Signed
         if constexpr (is_signed<T>::value) {
             int32_t val = static_cast<int32_t>(arg);
             if (spec == 'd') {
@@ -131,7 +131,7 @@ inline void handle_arg(T arg, char spec) {
                 return;
             }
         }
-        // Беззнаковые типы
+        // Unsigned
         else {
             uint32_t val = static_cast<uint32_t>(arg);
             if (spec == 'u') {
@@ -145,24 +145,24 @@ inline void handle_arg(T arg, char spec) {
                 return;
             }
         }
-        // Символ (для любого целого типа при спецификаторе 'c')
+        // symbol ('c')
         if (spec == 'c') {
         	USART2_Send_Char(static_cast<char>(arg));
             return;
         }
     }
 
-    // Несоответствие типа и спецификатора — выводим как есть
+    // Type and specifier mismatch
     USART2_Send_Char('%');
     USART2_Send_Char(spec);
 }
 
-// Рекурсивная обработка аргументов
+// Recursive argument processing
 template<typename T, typename... Args>
 inline void format_args(const char*& fmt, T arg, Args... args) {
     while (*fmt) {
         if (*fmt == '%') {
-            fmt++; // пропускаем '%'
+            fmt++; // miss '%'
             char spec = *fmt;
 
             if (spec == '%') {
@@ -172,7 +172,7 @@ inline void format_args(const char*& fmt, T arg, Args... args) {
             }
 
             fmt++;
-            // Рекурсивный вызов для следующих аргументов
+            // Recursive call for the following arguments
             format_args(fmt, args...);
             return;
         } else {
@@ -180,10 +180,10 @@ inline void format_args(const char*& fmt, T arg, Args... args) {
         }
     }
 
-    // Если остались невостребованные аргументы, можно тут реализовать вывод предупреждения
+    // If there are unclaimed arguments, you can implement the warning output here.
 }
 
-// === Публичный интерфейс ===
+// === Public interface ===
 
 template<typename... Args>
 inline void usart_printf(const char* fmt, Args... args) {

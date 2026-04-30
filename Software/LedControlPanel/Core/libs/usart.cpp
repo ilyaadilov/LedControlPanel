@@ -32,16 +32,37 @@ void USART2_Init(void){
 
 	USART2->BRR = 16000000U / 115200U;              // 0x08A for FCLK = 16 MHz and baudrate = 115200
 
-	USART2->CR1 |= USART_CR1_TE;          // Transmitter Enable
-	USART2->CR1 |= USART_CR1_UE;          // Enable USART
+	USART2->CR1 |= USART_CR1_TE;                    // Transmitter Enable
+	USART2->CR1 |= USART_CR1_UE;                    // Enable USART
 
 }
 
+void USART2_DeInit(void){
+
+	while(!(USART2->ISR & USART_ISR_TC));           // Waiting end of transmission
+
+	USART2->CR1 &= ~USART_CR1_TE;                   // Transmitter disable
+	USART2->CR1 &= ~USART_CR1_UE;                   // USART disable
+
+	RCC->APBENR1 &= ~RCC_APBENR1_USART2EN;          // Clock USART2 disable
+
+	//Settings for GPIO PA2
+	GPIOA->MODER |= GPIO_MODER_MODE2;               // Clear MODE (11 - Reset state)
+	GPIOA->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED2;        // Clear OSPEEDR
+	GPIOA->PUPDR &= ~(GPIO_PUPDR_PUPD2);            // Clear PUPDR
+	GPIOA->AFR[0] &= ~(GPIO_AFRL_AFSEL2);           // Clear Alternate function
+
+	//Settings for GPIO PA3
+	GPIOA->MODER |= GPIO_MODER_MODE3;               // Clear MODE (11 - Reset state)
+	GPIOA->OSPEEDR &= ~GPIO_OSPEEDR_OSPEED3;        // Clear OSPEEDR
+	GPIOA->PUPDR &= ~GPIO_PUPDR_PUPD3;              // Clear PUPDR
+	GPIOA->AFR[0] &= ~(GPIO_AFRL_AFSEL3);           // Clear Alternate function
+
+}
 void USART2_Send_Char(char chr){
 
 	while(!(USART2->ISR & USART_ISR_TXE_TXFNF));
 	USART2->TDR = chr;
-	//while (!(USART2->ISR & USART_ISR_TC)) {}
 }
 
 void USART2_Send_Str(const char* str){

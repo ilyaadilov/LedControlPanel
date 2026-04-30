@@ -70,48 +70,34 @@ uint16_t ADC_t::Measure(uint8_t pin_num) {
 
 void ADC_t::MeasureAll() {
 
-	// save local parameters between function call
+	// Save local parameters between function call
 	static uint16_t resultColourTemp = 0;
 	static uint16_t resultBrightness = 0;
 	static uint16_t lastColourTemp = 0;
 	static uint16_t lastBrightness = 0;
 
-	// Measure channels
-	resultColourTemp = this->Measure(6);
-	resultBrightness = this->Measure(7);
+	// Measure channels, filter 8 counts
+	resultColourTemp = (lastColourTemp * 7 + this->Measure(6)) / 8;
+	resultBrightness = (lastBrightness * 7 + this->Measure(7)) / 8;
 
-	// Calculating the result (in percent), difference less 20 does not affect
+	// Calculating the result (in percent)
 
 	// ColourTemp
-	if (resultColourTemp >= lastColourTemp)
-		if ((resultColourTemp - lastColourTemp) > 20){
-			if (resultColourTemp > 4075) this->colourTemp = 100;
-			else
-				this->colourTemp = (resultColourTemp * 100U) / 4095U;
-			lastColourTemp = resultColourTemp;
-		}
-	if (resultColourTemp < lastColourTemp)
-		if ((lastColourTemp - resultColourTemp) > 20){
-			if (resultColourTemp < 20) this->colourTemp = 0;
-			else
-				this->colourTemp = (resultColourTemp * 100U) / 4095U;
-			lastColourTemp = resultColourTemp;
-		}
+	if (resultColourTemp > 4075)
+		this->colourTemp = 100;
+	else if (resultColourTemp < 20)
+		this->colourTemp = 0;
+	else
+		this->colourTemp = (resultColourTemp * 100U) / 4095U;
+	lastColourTemp = resultColourTemp;
 
 	// Brightness
-	if (resultBrightness >= lastBrightness)
-		if ((resultBrightness - lastBrightness) > 20){
-			if (resultBrightness > 4075) this->brightness = 100;
-			else
-				this->brightness = (resultBrightness * 100U) / 4095U;
-			lastBrightness = resultBrightness;
-		}
-	if (resultBrightness < lastBrightness)
-		if ((lastBrightness - resultBrightness) > 20){
-			if (resultBrightness < 20) this->brightness = 0;
-			else
-				this->brightness = (resultBrightness * 100U) / 4095U;
-			lastBrightness = resultBrightness;
-		}
+	if (resultBrightness > 4075)
+		this->brightness = 100;
+	else if (resultBrightness < 20)
+		this->brightness = 0;
+	else
+		this->brightness = (resultBrightness * 100U) / 4095U;
+	lastBrightness = resultBrightness;
 
 }

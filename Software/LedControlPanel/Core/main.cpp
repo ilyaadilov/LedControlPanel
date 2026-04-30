@@ -8,52 +8,47 @@
 #define LED_COLD 1         // Channel 1 TIM2
 #define LED_HOT  2         // Channel 2 TIM2
 
-
 void Timeout_ms_Init();
 void timeout_ms(uint32_t timeout_ms);
 
 ADC_t Adc;
 TIM_t Tim2;
 
+
 int main(void){
 
 	// Start with HSI=16MHz
 	Timeout_ms_Init();
-	RCC->IOPENR |= RCC_IOPENR_GPIOAEN;
-	GPIOA->MODER &= ~GPIO_MODER_MODE4;              // Clear MODE for PA4
-	GPIOA->MODER |= GPIO_MODER_MODE4_0;             // Output mode
-	GPIOA->PUPDR &= ~GPIO_PUPDR_PUPD4;              // No pull-up\pull-down
 
-#ifdef USE_USART_LOGGING
 	USART2_Init();
 	usart_printf("SystemCoreClock = %u Hz\r\n", SystemCoreClock);
-	usart_printf("Digit = %d, Udigit = %u, String = %s, Hex = %X\r\n", -1, 2, "Hello", 0x20000000);
-#endif
 
 	Adc.Init();
-
 	Tim2.Init();
+
+	USART2_DeInit();
 
 	while (1)
 	{
 		Adc.MeasureAll();
-		usart_printf("ColourTemperature = %u\r\n", Adc.colourTemp);
-		usart_printf("Brightness = %u\r\n", Adc.brightness);
 
 		// ColourTemperature and Brightness changing
 		if (Adc.colourTemp >= 50){
 			Tim2.SetDuty(LED_COLD, Adc.brightness);
-			Tim2.SetDuty(LED_HOT, ((100 - (2*(Adc.colourTemp - 50)))*Adc.brightness)/100);
+			Tim2.SetDuty(LED_HOT, ((100 - 2 * (Adc.colourTemp - 50)) * Adc.brightness) / 100);
 		}
 		else{
 			Tim2.SetDuty(LED_HOT, Adc.brightness);
-			Tim2.SetDuty(LED_COLD, ((2*Adc.colourTemp)*Adc.brightness)/100);
+			Tim2.SetDuty(LED_COLD, (2 * Adc.colourTemp * Adc.brightness) / 100);
 		}
 
-		GPIOA->ODR ^= GPIO_ODR_OD4;
-		timeout_ms(100);
+		timeout_ms(10);
 	}
+
 }
+
+
+// === Support functions ===
 
 void Timeout_ms_Init() {
 

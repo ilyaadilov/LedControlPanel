@@ -3,7 +3,7 @@
 
 // Global settings for project
 
-//#define PRODUCTION                 // Uncomment at production
+#define PRODUCTION                 // Uncomment at production
 
 
 
@@ -12,7 +12,7 @@
 
 #else
 
-#define USE_USART_LOGGING                 // Включает отправку данных по USART (логгирование, использование usart_printf)
+#define USE_USART_LOGGING                 // Logging with usart_printf
 
 #endif
 
